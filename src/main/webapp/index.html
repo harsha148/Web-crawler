@@ -1,0 +1,425 @@
+<!--<html>-->
+<!--<head>-->
+<!--</head>-->
+<!--<body>-->
+<!--	<h1>Eulerity Take-Home Challenge</h1>-->
+
+<!--	<h2>How it works</h2>-->
+<!--	<ul>-->
+<!--		<li>Pressing the submit button on this page will make a POST-->
+<!--			request to /main</li>-->
+<!--		<li>That request will contain a form parameter with the url-->
+<!--			populated in the input box below</li>-->
+<!--		<li>The ImageFinder servlet will respond to the request with a-->
+<!--			list of image urls</li>-->
+<!--		<li>This page contains javascript to send the request and use the-->
+<!--			response to build a list of images</li>-->
+<!--	</ul>-->
+<!--	<h2>Backend Developers</h2>-->
+<!--	<ul>-->
+<!--		<li>You can update the ImageFinder servlet to add crawling logic</li>-->
+<!--		<li>Feel free to add as many classes/packages/files/third party-->
+<!--			libraries as you'd like</li>-->
+<!--		<li>We recommend JSoup for parsing web pages</li>-->
+<!--		<li>You can update this page's html/css/style if you plan on-->
+<!--			improving the interface</li>-->
+<!--		<li>Your final submission does not need to contain any of the-->
+<!--			files included herein</li>-->
+<!--		<li>This project is just skeleton code so you can hit the ground-->
+<!--			running.</li>-->
+<!--		<li>Some ideas:-->
+<!--			<ul>-->
+<!--			<li>Crawl not only the given url, but other pages in the same domain</li>-->
+<!--			<li>Make your crawler multithreaded to speed up response times</li>-->
+<!--			<li>Be a friendly crawler and try not to hammer a site</li>-->
+<!--			<li>Think about how to identify different classes of images and do they need special handling</li>-->
+<!--			<li>Can you identify images as logos? Perhaps collect favicons?</li>-->
+<!--			<li>Can you mark images that contain people?</li>-->
+<!--			</ul>-->
+<!--		</li>-->
+<!--	</ul>-->
+<!--	<h2>Important Notes</h2>-->
+<!--	<p>Congratulations on making it this far into the interview-->
+<!--		process!</p>-->
+<!--	<p>-->
+<!--	This is a free-form hackathon for a very important reason. We wish to see what ideas you can bring to the table.-->
+<!--	</p>-->
+<!--	<p><strong>If your submission only contains 5-10 lines of new code, please think twice about submitting it.</strong> If you need more time, you can ask for it.-->
+<!--	</p>-->
+<!--	<p>-->
+<!--	You can use one of the ideas above, but feel free to go off and build something completely different. -->
+<!--	The important thing is to submit something that highlights your strengths as a developer.-->
+<!--	</p>-->
+<!--	<p>-->
+<!--	  <b>Remember, this is your chance to show off how you can best contribute to our team.</b>-->
+<!--	</p>-->
+<!--	<p>Please remember to think about good design and code style. Comments in your code are great, but thought should also be taken in how to name your variables and method.</p>-->
+
+
+
+<!--	<div class="content">-->
+<!--		<div class="input">-->
+<!--			<form>-->
+<!--				<input type="text" name="url">-->
+<!--			</form>-->
+<!--			<button type="button">Submit!</button>-->
+<!--		</div>-->
+<!--		<div class="output">-->
+<!--			<ul class="results">-->
+
+<!--			</ul>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--	<script>-->
+<!--		var resultList = document.querySelector('ul.results');-->
+<!--		var urlInput = document.querySelector('input[name=url]')-->
+
+<!--		apiCallBack = function(xhr, callback) {-->
+<!--			if (xhr.readyState == XMLHttpRequest.DONE) {-->
+<!--				if (xhr.status != 200) {-->
+<!--					let message = xhr.status + ":" + xhr.statusText + ":"-->
+<!--							+ xhr.responseText;-->
+<!--					alert(message);-->
+<!--					throw 'API call returned bad code: ' + xhr.status;-->
+<!--				}-->
+<!--				let response = xhr.responseText ? JSON.parse(xhr.responseText)-->
+<!--						: null;-->
+<!--				if (callback) {-->
+<!--					callback(response);-->
+<!--				}-->
+<!--			}-->
+<!--		}-->
+
+<!--		updateList = function(response) {-->
+<!--			resultList.innerHTML = '';-->
+<!--			for (var i = 0; i < response.length; i++) {-->
+<!--				var img = document.createElement("img");-->
+<!--				img.width = 200;-->
+<!--				img.src = response[i];-->
+<!--				resultList.appendChild(img);-->
+<!--			}-->
+<!--		}-->
+
+<!--		makeApiCall = function(url, method, obj, callback) {-->
+<!--			let xhr = new XMLHttpRequest();-->
+<!--			xhr.open(method, url);-->
+<!--			xhr.onreadystatechange = apiCallBack.bind(null, xhr, callback);-->
+<!--			xhr.send(obj ? obj instanceof FormData || obj.constructor == String ? obj : JSON.stringify(obj) : null);-->
+<!--		}-->
+
+<!--		document.querySelector('button').addEventListener("click", function(event) {-->
+<!--			event.preventDefault();-->
+<!--			makeApiCall('/main?url=' + urlInput.value, 'POST', null, updateList);-->
+<!--		});-->
+<!--	</script>-->
+<!--</body>-->
+
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ImageFinder</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			text-align: center;
+			background-color: #f8f9fa;
+			margin: 0;
+			padding: 0;
+		}
+
+		h1 {
+			margin-top: 20px;
+			font-size: 36px;
+			font-weight: bold;
+			color: #333;
+		}
+
+		.container {
+			margin-top: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		input[type="text"] {
+			width: 500px;
+			padding: 12px;
+			font-size: 18px;
+			border: 2px solid #ccc;
+			border-radius: 5px;
+			outline: none;
+		}
+
+		input[type="text"]:focus {
+			border-color: #28a745;
+		}
+
+		.error-message {
+			color: red;
+			font-size: 14px;
+			margin-top: 5px;
+			display: none;
+		}
+
+		button {
+			margin-top: 15px;
+			padding: 12px 24px;
+			font-size: 18px;
+			color: white;
+			background-color: #28a745;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: 0.3s;
+		}
+
+		button:disabled {
+			background-color: #ccc;
+			cursor: not-allowed;
+		}
+
+		button:hover {
+			background-color: #218838;
+		}
+
+		.spinner {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			display: none;
+			z-index: 1000;
+		}
+
+		.spinner div {
+			width: 40px;
+			height: 40px;
+			border: 4px solid #fff;
+			border-top: 4px solid #007bff;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+
+		.blur {
+			filter: blur(5px);
+			pointer-events: none;
+		}
+
+		.output {
+			margin-top: 20px;
+			font-size: 20px;
+			font-weight: bold;
+		}
+
+		.carousel-container {
+			position: relative;
+			width: 80%;
+			margin: 20px auto;
+			overflow: hidden;
+		}
+
+		.carousel {
+			display: flex;
+			transition: transform 0.5s ease-in-out;
+		}
+
+		.carousel img {
+			width: 200px;
+			height: auto;
+			margin: 10px;
+			border-radius: 5px;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.nav-button {
+			/*position: absolute;*/
+			top: 50%;
+			transform: translateY(-50%);
+			background-color: rgba(0, 0, 0, 0.6);
+			color: white;
+			font-size: 24px;
+			padding: 10px;
+			cursor: pointer;
+			border-radius: 50%;
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10;
+			transition: background-color 0.3s ease;
+		}
+
+		.nav-button:hover {
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		.left {
+			left: 10px;
+		}
+
+		.right {
+			right: 10px;
+		}
+
+		.nav-button:disabled {
+			background-color: rgba(0, 0, 0, 0.2);
+			cursor: not-allowed;
+		}
+	</style>
+</head>
+<body>
+
+<h1>ImageFinder</h1>
+
+<div class="container">
+	<input type="text" name="url" placeholder="Enter URL and click submit to crawl">
+	<div class="error-message">Invalid URL. Please enter a valid URL.</div>
+	<button type="button">Submit</button>
+</div>
+
+<div class="spinner">
+	<div></div>
+</div>
+
+<div class="output"></div>
+
+<div id="carousel-container">
+<!--	<button class="nav-button left" >&#9665;</button>-->
+<!--	<div class="carousel-container"></div>-->
+<!--	<button class="nav-button right">&#9655;</button>-->
+</div>
+
+<script>
+	var resultList = document.querySelector('ul.results');
+	var urlInput = document.querySelector('input[name=url]');
+	var spinner = document.querySelector('.spinner');
+	apiCallBack = function(xhr, callback) {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			if (xhr.status !== 200) {
+				let message = xhr.status + ":" + xhr.statusText + ":"
+						+ xhr.responseText;
+				alert(message);
+				throw 'API call returned bad code: ' + xhr.status;
+			}
+			let response = xhr.responseText ? JSON.parse(xhr.responseText) : null;
+			if (callback) {
+				callback(response);
+			}
+		}
+	}
+
+	updateList = function(response) {
+		// Clear any existing content
+		document.getElementById("carousel-container").innerHTML = '';
+		console.log(response);
+		// Group images by category
+		var categories = {};
+
+		response.forEach(function(item) {
+			if (!categories[item.category]) {
+				categories[item.category] = [];
+			}
+			categories[item.category].push(item.url);
+		});
+
+		// Create a carousel for each category
+		for (var category in categories) {
+			var carousel = createCarouselForCategory(category, categories[category]);
+			document.getElementById("carousel-container").appendChild(carousel);
+		}
+		spinner.style.display = "none";
+		document.body.classList.remove('blur');
+	}
+
+	createCarouselForCategory = function(category, imageUrls) {
+		// Create a carousel container
+		var carouselContainer = document.createElement("div");
+		carouselContainer.classList.add("carousel-container");
+
+		// Create the title for the category
+		var title = document.createElement("h2");
+		title.textContent = category.charAt(0).toUpperCase() + category.slice(1) + " Images";
+		carouselContainer.appendChild(title);
+
+		// Create the carousel itself
+		var carousel = document.createElement("div");
+		carousel.classList.add("carousel");
+		carouselContainer.appendChild(carousel);
+
+		var leftArrow = document.createElement("button");
+		leftArrow.classList.add("left-arrow","nav-button");
+		leftArrow.textContent = "←";
+		carousel.appendChild(leftArrow);
+
+		var imageContainer = document.createElement("div");
+		imageContainer.classList.add("carousel-images");
+		imageUrls.forEach(function(url) {
+			var img = document.createElement("img");
+			img.src = url;
+			img.width = 200;
+			imageContainer.appendChild(img);
+		});
+		carousel.appendChild(imageContainer);
+
+		var rightArrow = document.createElement("button");
+		rightArrow.classList.add("right-arrow","nav-button");
+		rightArrow.textContent = "→";
+		carousel.appendChild(rightArrow);
+
+		// Add event listeners for the arrows to navigate the carousel
+		let currentIndex = 0;
+		const showImages = () => {
+			let images = imageContainer.querySelectorAll("img");
+			for (let i = 0; i < images.length; i++) {
+				images[i].style.display = (i >= currentIndex && i < currentIndex + 4) ? "inline-block" : "none";
+			}
+			leftArrow.disabled = currentIndex === 0;
+			rightArrow.disabled = currentIndex >= images.length - 4;
+		};
+
+		leftArrow.addEventListener("click", function() {
+			if (currentIndex > 0) {
+				currentIndex--;
+				showImages();
+			}
+		});
+
+		rightArrow.addEventListener("click", function() {
+			if (currentIndex < imageUrls.length - 4) {
+				currentIndex++;
+				showImages();
+			}
+		});
+
+		// Show the initial set of images
+		showImages();
+
+		return carouselContainer;
+	}
+
+	makeApiCall = function(url, method, obj, callback) {
+		let xhr = new XMLHttpRequest();
+		xhr.open(method, url);
+		xhr.onreadystatechange = apiCallBack.bind(null, xhr, callback);
+		document.body.classList.add('blur');
+		spinner.style.display = "block";
+		xhr.send(obj ? obj instanceof FormData || obj.constructor == String ? obj : JSON.stringify(obj) : null);
+	}
+
+	document.querySelector('button').addEventListener("click", function(event) {
+		event.preventDefault();
+		makeApiCall('/main?url=' + urlInput.value, 'POST', null, updateList);
+	});
+</script>
+Check out the ReadMe for details!
+</body>
+</html>

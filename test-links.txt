@@ -1,0 +1,9 @@
+Please paste your list of test URLs below:
+https://medium.com/@davidmles/comparing-ssgs-static-site-generators-for-my-blog-a6724a719150
+https://www.youtube.com
+https://www.nytimes.com : takes about 2mins to process (but it extracts around 4000 images)
+https://refactoring.guru/design-patterns (completes the request in 30 seconds and returns 353 images.
+                                            It takes a long time because webpage has every page in 10 languages
+                                            (in a different URL), so effectively all the pages are crawled 10 times.
+                                            This should be handled better to identify such cases and prevent the
+                                            crawler from the repetitive crawls.
