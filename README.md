@@ -1,6 +1,6 @@
 # Image Web Crawler
 
-### Implemented Functionality
+### Functionality
 - Built a web crawler that can find all images on the web page(s) that it crawls.
 - Crawling sub-pages (identified by extracting the <a/> elements within the document) to find more images.
 - Implemented multi-threading to crawl multiple pages simultaneously.
@@ -11,6 +11,13 @@
 - Implemented a delay between crawls to the same domain pages to avoid overwhelming the webpage.
 - Improved the UI to display the different categories of images separately.
 - Implemented logging to record information/errors from the application to a log file.
+
+### Homepage
+![Homepage](https://github.com/harsha148/Web-crawler/blob/main/images/homepage.png)
+
+### Extracted Images
+![Crawled Images](https://github.com/harsha148/Web-crawler/blob/main/images/Images.png)
+
 
 ### Design principles and implementation choices
 - Extensibility to new image categories: The code is designed to be easily extended for detecting new categories of images beyond just general images and logos.The Image class associates images with a Category enum, making it straightforward to introduce new categories without modifying existing logic significantly. The only piece of additional code needed to add more categorization is the logic to classify images to the new categories (use this logic to identify the images belonging to the category and set the category field of Image object accordingly and additionally add a type of return data that implements the interface CrawlDataStorage ). There would be no changes required within the frontend as well. This ensures minimal code changes when adapting the system to new requirements.
